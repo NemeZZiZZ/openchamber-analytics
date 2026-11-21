@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Reject internal planning documents
+        run: |
+          if [ -n "$(git ls-files 'docs/superpowers/**')" ]; then
+            echo 'docs/superpowers must not be tracked in the public repository'
+            exit 1
+          fi
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.0'
+
+      - name: Install with the committed lockfile
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Build output checks
+        run: npm run check:build
+
+      - name: Guest package check
+        run: npm run check:guest
+
+      - name: Verify committed builds match a clean rebuild
+        run: |
+          git diff --exit-code -- panel/main.js panel/main.css page/main.js page/main.css service/main.js

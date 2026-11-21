@@ -1,0 +1,72 @@
+{
+  "name": "openchamber-analytics",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Analytics extension for OpenChamber: full-screen usage statistics page and compact rail panel backed by a local read-only aggregation service.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "openchamber": {
+    "apiVersion": 1,
+    "engines": {
+      "openchamber": ">=2.7.0"
+    },
+    "id": "analytics",
+    "name": "Analytics",
+    "icon": "bar-chart",
+    "contributes": {
+      "panel": {
+        "entry": "panel/index.html",
+        "mobile": true
+      },
+      "page": {
+        "entry": "page/index.html",
+        "title": "Analytics",
+        "mobile": true
+      },
+      "capabilities": [
+        "sessions"
+      ],
+      "service": {
+        "entry": "service/main.js",
+        "runtime": "host",
+        "provides": [
+          "opencode"
+        ],
+        "keepRunning": true
+      }
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p .",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "build": "tsx scripts/build.ts",
+    "check:build": "tsx scripts/check-build.ts",
+    "check:guest": "openchamber-guest-check ."
+  },
+  "dependencies": {
+    "@openchamber/sdk": "2.7.2",
+    "@opencode/client": "2.3.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/node": "^22.19.0",
+    "esbuild": "^0.28.2",
+    "eslint": "^9.39.1",
+    "jsdom": "^26.1.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0",
+    "typescript-eslint": "^8.46.0",
+    "vitest": "^5.1.1"
+  },
+  "author": "NemeZZiZZ",
+  "keywords": [
+    "openchamber",
+    "openchamber-extension",
+    "analytics",
+    "opencode"
+  ]
+}
